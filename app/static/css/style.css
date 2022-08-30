@@ -1,0 +1,101 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+* { 
+    box-sizing: border-box;
+}
+
+body {
+    /* background: #e1eaf5; */
+    background: linear-gradient(#f9f9f9,#cfcfcf);
+    font-family: 'Poppins', sans-serif;
+
+    /* Custom */
+    display: flex;
+    min-height: 100vh;
+}
+
+app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    flex-grow: 1;
+}
+.flex-fill {
+    /*flex: <grow> <shrink> <flex-basis>*/
+    flex: 1 1 auto !important;
+}
+
+.container {
+    background: white;
+    min-width: 50vw;
+    margin: 1rem auto;
+    box-shadow: 0 0 5px rgba(65,67,144,0.15);
+    padding: 50px;
+}
+
+h1 {
+    margin: 0 0 30px;
+    color: #475369;
+}
+
+ul {
+    padding: 0 0 30px;
+    border-bottom: 1px solid #d9dfe4;
+    margin-bottom: 30px;
+}
+
+ul:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+li {
+    list-style: none;
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    color: #475268;
+}
+
+header {    
+    background: rgb(0, 153, 255);
+    width: 100%;
+    text-align: center;
+}
+
+ul.inline.nav {
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 1rem 0;
+    background: rgb(0, 153, 255);
+}
+
+ul.inline.nav > li {
+    all: unset;
+    display: inline-block;
+}
+.nav a { 
+    color: white; 
+    padding:1rem; 
+    text-decoration: none;
+}
+.nav a:hover {
+    color:rgb(0, 47, 78);
+    border-bottom: 5px solid white;
+}
+
+.field-name {
+    font-weight: 500;
+    min-width: 95px;
+    display: inline-block;
+}
+
+.field-value {
+    font-size: .9em;
+}

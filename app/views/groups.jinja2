@@ -1,0 +1,25 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+  <h1>Groups</h1>
+  {% for group in groups %}
+    <ul id="group.name">
+      <li>
+        <span class="field-name">Group:</span>
+        <span class="field-value">{{ group.group }}</span>
+      </li>
+      <li>
+        <span class="field-name">Description:</span>
+        <span class="field-value">{{ group.description }}</span>
+      </li>
+      <li>
+        <span class="field-name">Created:</span>
+        <span class="field-value">{{ group.created }}</span>
+      </li>
+      <li>
+        <span class="field-name">Is Security:</span>
+        <span class="field-value">{{ group.is_security }}</span>
+      </li>
+    </ul>
+  {% endfor %}
+{% endblock %}

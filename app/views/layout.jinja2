@@ -11,12 +11,21 @@
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css">
   <meta name="theme-color" content="#5eb9d7" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon-32x32.png') }}"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon-16x16.png') }}"/>
 </head>
 
 <body class="{{template}}">
-  {% block content %}{% endblock %}
-  {% include 'analytics.jinja2' %}
+  <app-wrapper>
+    {% include 'header.html' %}
+
+    <div class="{{ 'container' if not hide_container else '' }}">
+      {% block content %}{% endblock %}
+    </div>
+
+    <div class="flex-fill"></div>
+    {% include 'footer.html' %}
+  </app-wrapper>
 </body>
 
 </html>

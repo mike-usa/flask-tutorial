@@ -1,0 +1,29 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+  <h1>Users</h1>
+  {% for user in users %}
+    <ul id="user.username">
+      <li>
+        <span class="field-name">User:</span>
+        <span class="field-value">{{ user.username }}</span>
+      </li>
+      <li>
+        <span class="field-name">Email:</span>
+        <span class="field-value"><a href="{{ user.email }}">{{ user.email }}</a></span>
+      </li>
+      <li>
+        <span class="field-name">Created:</span>
+        <span class="field-value">{{ user.created }}</span>
+      </li>
+      <li>
+        <span class="field-name">Bio:</span>
+        <span class="field-value">{{ user.bio }}</span>
+      </li>
+      <li>
+        <span class="field-name">Admin:</span>
+        <span class="field-value">{{ user.admin }}</span>
+      </li>
+    </ul>
+  {% endfor %}
+{% endblock %}
