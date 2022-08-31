@@ -1,0 +1,61 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+  <h1 class="inline-block">
+    {% if page_title %}
+      User: {{page_title}}
+    {% else %}
+      Users
+    {% endif %}
+  </h1>
+
+  {% if page_title %}
+    <div class="btn close" style="float:right;" onclick="useInternalLink()">
+      <a href="/users">X</a>
+    </div>
+  {% endif %}
+
+
+  {% for user in users %}
+    <ul id="{{ user.username }}">
+      {% if not page_title %}
+        <li>
+          <span class="field-name">User:</span>
+          <span class="field-value"><a href="/users/{{ user.username }}">{{ user.username }}</a></span>
+        </li>
+      {% endif %}
+
+      <li>
+        <span class="field-name">Email:</span>
+        <span class="field-value"><a href="{{ user.email }}">{{ user.email }}</a></span>
+      </li>
+      <li>
+        <span class="field-name">Created:</span>
+        <span class="field-value">{{ user.created }}</span>
+      </li>
+      
+      {% if page_title %}
+        <li>
+          <span class="field-name">Bio:</span>
+          <span class="field-value">{{ user.bio }}</span>
+        </li>
+        <li>
+          <span class="field-name">Admin:</span>
+          <span class="field-value">{{ user.admin }}</span>
+        </li>
+        <li>
+          <span class="field-name">Groups:</span>
+          <span class="field-value">
+            {% if user.groups %}
+              <ul>
+                {% for group in user.groups %}
+                  <li><a href="/groups/{{group.group}}">{{group.group}}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </span>
+        </li>
+      {% endif %}
+    </ul>
+  {% endfor %}
+{% endblock %}

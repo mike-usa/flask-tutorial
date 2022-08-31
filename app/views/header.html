@@ -1,0 +1,12 @@
+<header style="margin: 0 auto;">
+  <ul class="inline nav">
+    <li><a href="/" class="{{ 'active' if request.path=='/' else '' }}">Home</a></li><!--
+    --><li><a href="/users"  class="{{ 'active' if request.path.rstrip('/').startswith('/users') else '' }}">Users</a></li><!--
+    --><li><a href="/groups" class="{{ 'active' if request.path.rstrip('/').startswith('/groups') else '' }}">Groups</a></li><!--
+    --><li><a href="/about"  class="{{ 'active' if request.path.rstrip('/').startswith('/about') else '' }}">About</a></li><!--
+    --><li><a href="/admin"  class="{{ 'active' if request.path.rstrip('/').startswith('/admin') else '' }}">Admin</a></li><!--
+    --><li><a href="/roles"  class="{{ 'active' if request.path.rstrip('/').startswith('/roles') else '' }}">Roles</a></li><!--
+    --><li><a href="javascript:void(0)" onclick="toggleMode()" >Mode</a></li><!--
+    -->
+  </ul>
+</header>

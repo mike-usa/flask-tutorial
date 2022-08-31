@@ -1,0 +1,272 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(#f9f9f9,#cfcfcf);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    min-height: 100vh;
+}
+
+app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    flex-grow: 1;
+}
+.flex-fill {
+    /*flex: <grow> <shrink> <flex-basis>*/
+    flex: 1 1 auto !important;
+}
+
+.container {
+    background: white;
+    min-width: 50vw;
+    margin: 1rem auto;
+    box-shadow: 0 0 10px rgba(65,67,144,0.15);
+    padding: 1.5rem 2rem;
+    border-radius: 10px 10px;
+}
+
+h1 {
+    margin: 0 0 0.5rem;
+    color: #475369;
+}
+
+
+ul {
+    border-bottom: 1px solid #d9dfe4;
+    margin-bottom: 1rem;
+    padding: 0 0 1rem;
+}
+
+ul:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+li {
+    list-style: none;
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    color: #475268;
+    line-height: 1.75em;
+}
+
+header {
+    /* background: rgb(0, 153, 255);
+    background: rgb(29, 29, 29); */
+    width: 100%;
+    text-align: center;
+}
+
+footer {
+    background: rgb(243, 193, 65);
+    color: white;
+    text-align: right;
+    padding: 0.5rem;
+}
+
+ul.inline.nav {
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 1rem 0;
+    background: rgb(0, 153, 255);
+}
+
+ul.inline.nav > li {
+    all: unset;
+    display: inline-block;
+}
+
+.nav a {
+    color: white; 
+    padding: 1rem; 
+    text-decoration: none;
+}
+
+.nav a:hover:not(.active) {
+    color: rgb(0, 47, 78);
+    border-bottom: 5px solid rgb(0, 47, 78);
+}
+
+.nav a.active {
+    color: rgb(0, 47, 78);
+    border-bottom: 5px solid rgb(0, 47, 78);
+}
+
+.field-name {
+    font-weight: 500;
+    min-width: 95px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.field-value {
+    font-size: 0.9em;
+    display: inline-block;
+}
+
+.btn.close {
+    padding: 0.5rem 1rem;
+    border-radius: 10px 10px;
+    border: 1px solid transparent;
+}
+
+.btn.close:hover {
+    font-weight: bold;
+    border: 1px solid black;
+    cursor: pointer;
+    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.container a {
+    text-decoration: none;
+}
+
+app-notice {
+    padding: 1rem;
+    margin-top: 5px; /* height of `.nav a:hover` border-bottom */
+    width: 100vw;
+    display: inline-block;
+    text-align: center;
+}
+
+app-notice.error {
+    background: rgb(255, 119, 149);
+}
+
+app-notice.success {
+    background: rgb(119, 255, 192);
+}
+
+app-notice-message {
+    text-align: left;
+    min-width: 50vw;
+    display: inline-block;
+}
+
+/* DARK MODE */
+
+body.dark {
+    /* background: linear-gradient(#090909, #121212); */
+    background: linear-gradient(#112, #223);
+}
+
+body.dark header,
+body.dark footer {
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.35);
+}
+
+
+body.dark .container {
+    background: linear-gradient(rgb(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05));
+    box-shadow: 0 0 20px rgba(123, 8, 255, 0.45);
+}
+
+body.dark h1 {
+    background-image: linear-gradient(rgb(123, 8, 255), rgb(255, 8, 234));
+    background-clip: text;
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+}
+
+body.dark .btn.close {
+    background-image: linear-gradient(rgb(123, 8, 255), rgb(255, 8, 234));
+    background-clip: text;
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+}
+
+body.dark .btn.close:hover {
+    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));    
+}
+
+body.dark .btn.close:hover a {
+    background-image: linear-gradient(45deg, rgb(123,8,255), rgba(28,255,107,0.711));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+}
+
+
+body.dark .container ul {
+    border-bottom: 1px solid rgba(28, 198, 255, 0.25);
+    /*
+    border-bottom: 1px solid rgba(28, 255, 107, 0.711);
+    border-bottom: 1px solid rgba(28, 198, 255, 0.868);
+    */
+}
+body.dark .container ul:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+body.dark ul.inline.nav {
+    background: linear-gradient(#161616, #292929);
+    background: linear-gradient(rgb(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05));
+}
+body.dark .nav a {
+    color: rgb(130, 130, 130);
+}
+body.dark .nav a.active {
+    color: rgba(28, 198, 255, 0.868);
+    border-bottom: 3px solid rgba(28, 198, 255, 0.868);
+}
+body.dark .nav a:hover:not(.active) {
+    color: white;
+    border-bottom: 3px solid white;
+}
+
+body.dark li {
+    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 1);
+    font-weight: normal;
+}
+
+body.dark app-notice.error {
+    background: linear-gradient(rgba(255, 60, 60, 0.75),rgba(255, 60, 60, 0.55));
+    color: white;
+}
+
+body.dark app-notice.success {
+    background: linear-gradient(rgba(119, 255, 192, 0.75),rgb(119, 255, 192,0.55));
+}
+
+body.dark .container a {
+    color: rgb(255, 8, 234);
+}
+
+body.dark .container a:visited:hover,
+body.dark .container a:hover {
+    color: rgb(123, 8, 255);
+}
+
+body.dark .container a:visited {
+    color: rgb(255, 8, 234);
+}
+
+
+.inline-block {
+    display: inline-block;
+}

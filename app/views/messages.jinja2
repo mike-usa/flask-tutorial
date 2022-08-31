@@ -1,0 +1,9 @@
+{% for message in messages %}
+  {% for status in message %}
+    <app-notice class="{{ status }}">
+      <app-notice-message>
+        {{ message[status] }}
+      </app-notice-message>
+    </app-notice>
+  {% endfor %}
+{% endfor %}
