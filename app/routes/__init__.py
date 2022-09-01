@@ -1,3 +1,12 @@
+# This file is special in that it imports (integrates) all 
+# the routes in the directory intended to be exposed through
+# the application.  This import could be automated to not
+# specify the files with some complex loading code
+#
+# The file also services as a pre-processor with `before_request`
+# as well as a catch-all for bad routes
+
+
 from flask import current_app as app
 from flask import g, session, url_for, redirect
 
@@ -22,3 +31,6 @@ def catch_all(path):
     messages = [{'error': 'Route not found'}]
     session['messages'] = messages
     return redirect(url_for('home_page'))
+
+
+app.register_blueprint(user.bp)
