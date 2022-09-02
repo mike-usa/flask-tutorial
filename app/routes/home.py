@@ -1,13 +1,9 @@
-"""Application routes."""
-from flask import current_app as app
-from flask import redirect, render_template, g, request, session, url_for
+"""Home routes."""
+from flask import Blueprint
+bp = Blueprint('home', __name__)
 
-@app.route("/", strict_slashes=False, methods=["GET"])
-def home_page():
-    hide_container = True
-    return render_template(
-        'home.jinja2',
-        title='Home',
-        hide_container=hide_container,
-        messages=g.messages
-    )
+from ..controllers.home import *
+bp.route('/', methods=['GET'])(index)
+bp.route('/home', methods=['GET'])(index)
+
+

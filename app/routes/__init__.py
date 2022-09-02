@@ -1,4 +1,4 @@
-# This file is special in that it imports (integrates) all 
+# This file is special in that it imports (integrates) all
 # the routes in the directory intended to be exposed through
 # the application.  This import could be automated to not
 # specify the files with some complex loading code
@@ -30,7 +30,11 @@ def set_messages():
 def catch_all(path):
     messages = [{'error': 'Route not found'}]
     session['messages'] = messages
-    return redirect(url_for('home_page'))
+    return redirect(url_for('home.index'))
 
 
+# Registers Blueprint with App
+# needed all to reference action in url_for (e.g., `url_for('home.index')`)
+app.register_blueprint(home.bp)
 app.register_blueprint(user.bp)
+app.register_blueprint(group.bp)

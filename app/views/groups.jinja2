@@ -1,15 +1,17 @@
-{% extends "layout.jinja2" %}
+{% extends "layouts/layout.jinja2" %}
+{% set is_profile_view = True if page_title else None %}
 
 {% block content %}
+
   <h1 class="inline-block">
-    {% if page_title %}
-      Group: {{page_title}}
+    {% if is_profile_view %}
+      <a href="/groups">Group: {{ page_title }}</a>
     {% else %}
       Groups
     {% endif %}
   </h1>
 
-  {% if page_title %}
+  {% if is_profile_view %}
     <div class="btn close" style="float:right;" onclick="useInternalLink()">
       <a href="/groups">X</a>
     </div>
@@ -18,14 +20,33 @@
 
   {% for group in groups %}
     <ul id="{{ group.name }}">
-    
-      {% if not page_title %}
+
+      {% if not is_profile_view %}
         <li>
           <span class="field-name">Group:</span>
           <span class="field-value"><a href="/groups/{{ group.group }}">{{ group.group }}</a></span>
         </li>
       {% endif %}
 
+      {% set profile_columns = ['owner', 'created', 'id'] %}
+      {% set exclude_columns = ['group'] %}
+      {% for column in group.__table__.columns %}
+        {% if column.name in exclude_columns %}{% continue %}{% endif %}
+        {% if not is_profile_view and column.name in profile_columns %}{% continue %}{% endif %}
+        {% set value = group[column.name] %}
+        <li>
+          <span class="field-name">{{ column.name | replace('_',' ') | title }}:</span>
+          <span class="field-value">
+            {% if column.name == 'group' %}
+              <a href="/groups/{{ value }}">{{ value }}</a>
+            {% else %}
+              {{ value|urlize }}
+            {% endif %}
+          </span>
+        </li>
+      {% endfor %}
+
+      <!--
       <li>
         <span class="field-name">Description:</span>
         <span class="field-value">{{ group.description }}</span>
@@ -38,7 +59,10 @@
         <span class="field-name">Is Security:</span>
         <span class="field-value">{{ group.is_security }}</span>
       </li>
-      {% if page_title %}
+      -->
+
+      {% if is_profile_view %}
+      <hr>
       <li>
         <span class="field-name" >Members:</span>
         <span class="field-value">

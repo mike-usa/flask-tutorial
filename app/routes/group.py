@@ -1,44 +1,52 @@
 """Group routes."""
-from datetime import datetime as dt
+# from app.models.group import Group, db
 
-from flask import current_app as app
-from flask import redirect, render_template, g, request, session, url_for
+from flask import Blueprint
+bp = Blueprint('group_blueprint',
+     __name__,
+     url_prefix='/groups'
+)
 
-from app.models.group import Group, db
+from ..controllers.group import *
+bp.route('/', methods=['GET'])(index)
+bp.route('/<string:groupname>', methods=['GET'])(show)
+bp.route('/<string:groupname>/new', methods=['GET'])(new)
+bp.route('/<string:groupname>/edit', methods=['GET'])(edit)
+bp.route('/<string:groupname>', methods=['POST'])(update)
+bp.route('/<string:groupname>', methods=['DELETE'])(delete)
 
+# @app.route("/groups", strict_slashes=False, methods=["GET"])
+# @app.route("/groups/<string:group>", strict_slashes=False, methods=["GET"])
+# def group_records(group=None):
+#     """Create a group via query string parameters."""
+#     group = request.args.get('group') if group==None else group
+#     description = request.args.get('description')
+#     is_security = bool(request.args.get('is_security')) if 'is_security' in request.args else False
 
-@app.route("/groups", strict_slashes=False, methods=["GET"])
-@app.route("/groups/<string:group>", strict_slashes=False, methods=["GET"])
-def group_records(group=None):
-    """Create a group via query string parameters."""
-    group = request.args.get('group') if group==None else group
-    description = request.args.get('description')
-    is_security = bool(request.args.get('is_security')) if 'is_security' in request.args else False
+#     if group:
+#         existing_group = Group.query.filter(
+#             Group.group == group
+#         ).first()
+#         if existing_group:
+#             return render_template('groups.jinja2', groups=[existing_group], title=group, page_title=group, messages=g.messages)
 
-    if group:
-        existing_group = Group.query.filter(
-            Group.group == group
-        ).first()
-        if existing_group:
-            return render_template('groups.jinja2', groups=[existing_group], title=group, page_title=group, messages=g.messages)
-        
-        # Create an instance of the Group class
-        new_group = Group(
-            group=group,
-            created=dt.now(),
-            description=description,
-            is_security=is_security,
-        )
-        
-        # Adds new User record to database
-        db.session.add(new_group)
-        
-        # Commits all changes
-        db.session.commit()
+#         # Create an instance of the Group class
+#         new_group = Group(
+#             group=group,
+#             created=dt.now(),
+#             description=description,
+#             is_security=is_security,
+#         )
 
-        session['messages']=[{'success': 'Group successfully created'}]
+#         # Adds new User record to database
+#         db.session.add(new_group)
 
-        # Change url (drop querystring)
-        return redirect(url_for("group_records"))
+#         # Commits all changes
+#         db.session.commit()
 
-    return render_template("groups.jinja2", groups=Group.query.all(), title="Show Groups", messages=g.messages)
+#         session['messages']=[{'success': 'Group successfully created'}]
+
+#         # Change url (drop querystring)
+#         return redirect(url_for("group_records"))
+
+#     return render_template("groups.jinja2", groups=Group.query.all(), title="Show Groups", messages=g.messages)
