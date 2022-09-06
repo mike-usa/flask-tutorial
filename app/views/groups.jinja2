@@ -24,12 +24,19 @@
       {% if not is_profile_view %}
         <li>
           <span class="field-name">Group:</span>
-          <span class="field-value"><a href="/groups/{{ group.group }}">{{ group.group }}</a></span>
+          <span class="field-value">
+            <a href="/groups/{{ group.group }}">{{ group.group }}</a>
+            {% if group.members %}
+              <div class="inline-block tag yellow">
+                <div class="text">{{group.members|count}}</div>
+              </div>
+            {% endif %}
+          </span>
         </li>
       {% endif %}
 
-      {% set profile_columns = ['owner', 'created', 'id'] %}
-      {% set exclude_columns = ['group'] %}
+      {% set profile_columns = ['created', 'updated', 'id'] %}
+      {% set exclude_columns = ['group','owner_id'] %}
       {% for column in group.__table__.columns %}
         {% if column.name in exclude_columns %}{% continue %}{% endif %}
         {% if not is_profile_view and column.name in profile_columns %}{% continue %}{% endif %}
@@ -46,24 +53,41 @@
         </li>
       {% endfor %}
 
-      <!--
-      <li>
-        <span class="field-name">Description:</span>
-        <span class="field-value">{{ group.description }}</span>
-      </li>
-      <li>
-        <span class="field-name">Created:</span>
-        <span class="field-value">{{ group.created }}</span>
-      </li>
-      <li>
-        <span class="field-name">Is Security:</span>
-        <span class="field-value">{{ group.is_security }}</span>
-      </li>
-      -->
-
       {% if is_profile_view %}
       <hr>
+      {#
       <li>
+        <span class="field-name">Owner:</span>
+        <span class="field-value">
+          <a href="/users/{{group.owner.username}}">{{group.owner.username}}</a>
+        </span>
+      </li>
+      #}
+      <li class="highlight">
+        <span class="field-name" >Owners:</span>
+        <span class="field-value">
+          {% if group.owners %}
+            <ul>
+              {% for owner in group.owners %}
+                <li><a href="/users/{{owner.username}}">{{owner.username}}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </span>
+      </li>
+      <li class="highlight">
+        <span class="field-name" >Maintainers:</span>
+        <span class="field-value">
+          {% if group.maintainers %}
+            <ul>
+              {% for maintainer in group.maintainers %}
+                <li><a href="/users/{{maintainer.username}}">{{maintainer.username}}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </span>
+      </li>
+      <li class="highlight">
         <span class="field-name" >Members:</span>
         <span class="field-value">
           {% if group.members %}
