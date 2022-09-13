@@ -1,18 +1,22 @@
 """User routes."""
-from datetime import datetime as dt
 
-from flask import current_app as app
-from flask import redirect, render_template, g, request, session, url_for
+# Standard library imports
+# --- None ---
 
-from app.models.user import User, db
-
+# Third party imports
 from flask import Blueprint
+from flask_cors import CORS
+
+# Local application imports
+from ..controllers.user import *  # controller actions
+
+
 bp = Blueprint('user_blueprint',
      __name__,
      url_prefix='/users'
 )
+CORS(bp) # enable CORS on the user_blueprint
 
-from ..controllers.user import *
 bp.route('/', methods=['GET'])(index)
 bp.route('/<string:username>', methods=['GET'])(show)
 bp.route('/<string:username>/new', methods=['GET'])(new)

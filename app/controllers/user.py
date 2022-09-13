@@ -1,18 +1,24 @@
-from datetime import datetime as dt
+"""User Controller"""
+
+# Standard library imports
+from datetime import datetime, timezone
 import re
 
-from flask import current_app as app
-from flask import redirect, render_template, g, request, session, url_for, jsonify
-import json
+# Third party imports
+from flask import redirect, render_template, g, request, session, url_for
+
+# Local application imports
 from app.models.user import User, db
 
+
+# Controller Actions
 
 def index():
   """Show all users."""
 
   if {'user','username'} & set(request.args):
-    username = get_username_from_querystring()
-    user = get_user_from_querystring()
+    username = __get_username_from_querystring()
+    user = __get_user_from_querystring()
     if user:
       return redirect(url_for('user_blueprint.update',username=user.username))
     else:
@@ -28,6 +34,7 @@ def index():
 
 def show(username=None,user=None):
   """Show a specific user."""
+
   if not user:
     user = User.query.filter(User.username==username).first_or_404(description='No "{}" user was found.'.format(username))
 
@@ -52,8 +59,9 @@ def new():
 
 def create(username=None):
   """Create a new user"""
+
   if not username:
-    username = get_username_from_querystring()
+    username = __get_username_from_querystring()
 
   if not username:
     session['messages'].append({'error': 'Could not find a user to create'})
@@ -71,7 +79,7 @@ def create(username=None):
   new_user = User(
     username=username,
     email=request.args.get('email'),
-    created=dt.now(),
+    created_at=datetime.now(timezone.utc),
     admin=bool(
         request.args.get("admin")
       ) if 'admin' in request.args else False
@@ -114,7 +122,9 @@ def update(username=None, user=None):
   relationships = user.__mapper__.relationships.keys()
   aliases = { 'user': 'username' }
   rel_aliases = { 
-    'assignment': 'groups',
+    'belongsto': 'groups',
+    'member': 'groups',
+    'memberof': 'groups',
     'group': 'groups',
     'owner': 'owns',
     'own': 'owns',
@@ -140,7 +150,7 @@ def update(username=None, user=None):
     value = request.args.get(arg)
 
     # Don't process protected fields
-    exclude_fields = ['user', 'username', 'created', 'updated', 'modified']
+    exclude_fields = ['user', 'username', 'created_at','created_by', 'updated_at','updated_by', 'modified']
 
     if column.lower() in exclude_fields and user.__dict__[column] != value:
       session['messages'].append({'error': f'Cannot update protected table field ({arg}).'})
@@ -161,7 +171,6 @@ def update(username=None, user=None):
     if relationship in ['groups','owns','maintains']:
       from app.models.group import Group
       # must pass object (can't pass id's)
-      print(f'values: {values}')
       if values:
         groups = Group.query.filter(Group.id.in_(values)).all()
       else:
@@ -193,10 +202,9 @@ def delete():
   pass
 
 
-########################################
+# Private Functions
 
-
-def get_username_from_querystring():
+def __get_username_from_querystring():
   for key in ['user','username']:
     if key in request.args:
       username = request.args[key] #request.args.get(key)
@@ -204,7 +212,7 @@ def get_username_from_querystring():
   return username if username else None
 
 
-def get_user_from_querystring():
-  username = get_username_from_querystring()
+def __get_user_from_querystring():
+  username = __get_username_from_querystring()
 
   return User.query.filter(User.username == username).first()

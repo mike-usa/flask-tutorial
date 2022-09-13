@@ -35,8 +35,8 @@
         </li>
       {% endif %}
 
-      {% set profile_columns = ['created', 'updated', 'id'] %}
-      {% set exclude_columns = ['group','owner_id'] %}
+      {% set profile_columns = ['created_by', 'created_at', 'id'] %}
+      {% set exclude_columns = ['group','owner_id', 'updated_at', 'updated_by'] %}
       {% for column in group.__table__.columns %}
         {% if column.name in exclude_columns %}{% continue %}{% endif %}
         {% if not is_profile_view and column.name in profile_columns %}{% continue %}{% endif %}
@@ -46,6 +46,8 @@
           <span class="field-value">
             {% if column.name == 'group' %}
               <a href="/groups/{{ value }}">{{ value }}</a>
+            {% elif column.type.__class__.__name__ == 'DateTime' %}
+              {{ value.strftime('%Y-%m-%d %I:%M:%S %p %z') if value else None }}
             {% else %}
               {{ value|urlize }}
             {% endif %}

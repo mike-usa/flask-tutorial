@@ -1,18 +1,24 @@
+"""Group Controller"""
+
+# Standard library imports
 from datetime import datetime as dt
 import re
 
-from flask import current_app as app
+# Third party imports
 from flask import redirect, render_template, g, request, session, url_for
 
+# Local application imports
 from app.models.group import Group, db
 
+
+# Controller Actions
 
 def index():
   """Show all groups."""
 
   if {'group','groupname'} & set(request.args):
-    groupname = get_groupname_from_querystring()
-    group = get_group_from_querystring()
+    groupname = __get_groupname_from_querystring()
+    group = __get_group_from_querystring()
     if group:
       return redirect(url_for('group_blueprint.update',group=group.group))
     else:
@@ -53,7 +59,7 @@ def new():
 def create(groupname=None):
   """Create a new group."""
   if not groupname:
-    groupname = get_groupname_from_querystring()
+    groupname = __get_groupname_from_querystring()
 
   if not groupname:
     session['messages'].append({'error': 'Could not find group to create'})
@@ -71,7 +77,7 @@ def create(groupname=None):
   new_group = Group(
     group=groupname,
     owner=request.args.get('owner'),
-    created=dt.now(),
+    created_at=dt.now(),
     is_security=bool(
       request.args.get('is_security')
     ) if 'is_security' in request.args else False
@@ -138,7 +144,7 @@ def update(groupname=None, group=None):
     value = request.args.get(arg)
 
     # Don't process protected fields
-    exclude_fields = ['group', 'groupname', 'created', 'updated', 'modified']
+    exclude_fields = ['group', 'groupname', 'created_at','created_by', 'updated_at','updated_by', 'modified']
 
     if column.lower() in exclude_fields and group.__dict__[column] != value:
       session['messages'].append(
@@ -160,8 +166,12 @@ def update(groupname=None, group=None):
     if relationship in ['members', 'owners', 'maintainers']:
       from app.models.user import User
       # must pass object (can't pass id's)
-      members = User.query.filter(User.id.in_(values)).all()
-      group.members.extend(members)  # extend() multiple, not append() single
+      if values:
+        members = User.query.filter(User.id.in_(values)).all()
+      else:
+        members = User.query.where(None).all()
+      # extend() == multiple; append() == single
+      group.members.extend(members)  
       tainted = True
     else:
       setattr(group, relationship, value)
@@ -187,10 +197,10 @@ def delete():
   pass
 
 
-########################################
+# Private Functions
 
 
-def get_groupname_from_querystring():
+def __get_groupname_from_querystring():
   for key in ['group', 'groupname']:
     if key in request.args:
       groupname = request.args[key]  # request.args.get(key)
@@ -198,7 +208,7 @@ def get_groupname_from_querystring():
   return groupname if groupname else None
 
 
-def get_group_from_querystring():
-  groupname = get_groupname_from_querystring()
+def __get_group_from_querystring():
+  groupname = __get_groupname_from_querystring()
 
   return Group.query.filter(Group.group == groupname).first()

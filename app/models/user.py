@@ -1,24 +1,35 @@
 """User data model."""
-from app import db
-from . user_group import Assignment, Owners, Maintainers
-from .mixins.timestamp import TimestampMixin
-from .mixins.inspector import InspectorMixin
 
+# Standard library imports
 import json
 from datetime import date, datetime
 
-def default(object):
+# Third party imports
+from app import db
+from sqlalchemy import event
+
+# Local application imports
+from .user_group import Members, Owners, Maintainers
+from .mixins.inspector import InspectorMixin
+from .mixins.timestamp import TimestampMixin
+
+
+def json_format(object):
   # format dates
   if isinstance(object, (date, datetime)):
-    return object.strftime('%Y-%m-%d %H:%m')
+    return object.strftime('%Y-%m-%d %H:%M %z')
 
+  # Call 'Group' to serialize itself
   if object.__class__.__name__ == 'Group':
     return object.serializer()
+
+  # instance display
   return f'<{object.__class__.__name__} id={object.id}>'
 
 
 class User(TimestampMixin, db.Model, InspectorMixin):
   """Data model for user accounts."""
+  
   app_schema = 'flaskapp'
   __table_args__ = { 'schema': app_schema }
   __tablename__ = "users"
@@ -40,12 +51,13 @@ class User(TimestampMixin, db.Model, InspectorMixin):
     back_populates='maintainers'
   )
   groups = db.relationship('Group',
-    secondary=Assignment.__table__,
+    secondary=Members.__table__,
     back_populates='members'
   )
 
   # Displays
-  def serializer(self):
+  def serialize(self):
+    """Display the model as a string or JSON string."""
     columns = self.keys()
 
     excludes = []
@@ -55,8 +67,7 @@ class User(TimestampMixin, db.Model, InspectorMixin):
     for column in columns:
       response[column] = getattr(self, column)
 
-    return json.loads(json.dumps(response, default=default))
-
+    return json.loads(json.dumps(response, default=json_format))
 
 
   def __repr__(self):

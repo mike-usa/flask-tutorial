@@ -19,10 +19,9 @@ depends_on = None
 
 
 def upgrade():
-
     app_schema = 'flaskapp'
 
-    # Create users table
+    # Create users temporary table model
     users = sa.table('users', 
         sa.Column('id', sa.Integer),#, autoincrement=True),
         sa.Column('username', sa.String(64)),
@@ -31,6 +30,8 @@ def upgrade():
         sa.Column('admin', sa.Boolean),
         schema=app_schema
     )
+
+    # Create temporary groups table model
     groups = sa.table('groups', 
         sa.Column('group', sa.String),
         sa.Column('owner', sa.Integer),
@@ -40,19 +41,25 @@ def upgrade():
     # Find or Create 'System' user if not exists
     # NOTE: be cautious with data migrations inside DDL migrations
     conn = op.get_bind()
-    sys_id = conn.execute(users.select().where(users.c.username=='System')).scalar()
+    sys_username = 'System'
+    sys_id = conn.execute(users.select().where(users.c.username==sys_username))
+    
     if not sys_id:
         sys_id = conn.execute(
             insert(users)
             .returning(users.c.id)
             .values(
-                username='System',
-                email='System@localhost',
-                created=datetime.now(timezone.utc),
+                username=sys_username,
+                email='system@localhost',
+                created=sa.literal_column(f'{datetime.now(timezone.utc)}'),
                 admin=True
             )
             .on_conflict_do_nothing()
-        ).scalar()
+        )
+
+    # Break scalar() call into separate block (instead of execute().scalar()
+    if sys_id is not None:
+        sys_id = sys_id.scalar() 
 
     # Add sys_id to current group.owner records (populate NULLs before 
     #   making the column NOT NULL)

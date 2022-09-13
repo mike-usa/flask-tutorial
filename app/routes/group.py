@@ -1,5 +1,14 @@
 """Group routes."""
-# from app.models.group import Group, db
+
+# Standard library imports
+# --- None ---
+
+# Third party imports
+from flask import Blueprint
+
+# Local application imports
+from ..controllers.group import *  # controller actions
+
 
 from flask import Blueprint
 bp = Blueprint('group_blueprint',
@@ -7,7 +16,6 @@ bp = Blueprint('group_blueprint',
      url_prefix='/groups'
 )
 
-from ..controllers.group import *
 bp.route('/', methods=['GET'])(index)
 bp.route('/<string:groupname>', methods=['GET'])(show)
 bp.route('/<string:groupname>/new', methods=['GET'])(new)

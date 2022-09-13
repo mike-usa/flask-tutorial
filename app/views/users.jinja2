@@ -33,8 +33,8 @@
         </li>
       {% endif %}
 
-      {% set profile_columns = ['bio', 'admin', 'id'] %}
-      {% set exclude_columns = ['username'] %}
+      {% set profile_columns = ['bio', 'admin', 'id', 'created_at', 'created_by'] %}
+      {% set exclude_columns = ['username', 'updated_at','updated_by'] %}
       {% for column in user.__table__.columns %}
         {% if column.name in exclude_columns %}{% continue %}{% endif %}
         {% if not is_profile_view and column.name in profile_columns %}{% continue %}{% endif %}
@@ -46,6 +46,8 @@
           <span class="field-value">
             {% if column.name == 'username' %}
               <a href="/users/{{ value }}">{{ value }}</a>
+            {% elif column.type.__class__.__name__ == 'DateTime' %}
+              {{ value.strftime('%Y-%m-%d %I:%M:%S %p %z') if value else None }}
             {% else %}
               {{ value|urlize }}
             {% endif %}
