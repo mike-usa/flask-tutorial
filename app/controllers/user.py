@@ -6,6 +6,7 @@ import re
 
 # Third party imports
 from flask import redirect, render_template, g, request, session, url_for
+from sqlalchemy import or_
 
 # Local application imports
 from app.models.user import User, db
@@ -40,7 +41,7 @@ def show(username=None,user=None):
 
   if request.args:
     if 'response' in request.args and request.args['response'] == 'json':
-      return user.serializer()
+      return user.serialize()
     else:
       return update(username=username, user=user)
 
@@ -171,13 +172,55 @@ def update(username=None, user=None):
     if relationship in ['groups','owns','maintains']:
       from app.models.group import Group
       # must pass object (can't pass id's)
-      if values:
-        groups = Group.query.filter(Group.id.in_(values)).all()
+      if values and value not in ['[]','None']:
+        vals = {
+          'add': {
+            'strings': [],
+            'integers': []
+          },
+          'remove': {
+            'strings': [],
+            'integers': []
+          }
+        }
+        for v in values:
+          if v.lstrip('-').isdigit():
+            v = int(v)
+            if v >= 0:
+              vals['add']['integers'].append(v)
+            else:
+              vals['remove']['integers'].append(abs(v))
+          elif isinstance(v, str):
+            if v[0] != '-':
+              vals['add']['strings'].append(v)
+            else:
+              vals['remove']['strings'].append(v.lstrip('-'))
+
+        # Adds
+        add_groups = Group.query.filter(
+          or_(
+            Group.id.in_(vals['add']['integers']),
+            Group.group.in_(vals['add']['strings'])
+          )
+        ).all()
+        # NOTE; extend() == multiple; append() == single
+        getattr(user, relationship).extend(add_groups)
+
+        # Removes
+        rem_groups = Group.query.filter(
+          or_(
+            Group.id.in_(vals['remove']['integers']),
+            Group.group.in_(vals['remove']['strings'])
+          )
+        ).all()
+        for group in rem_groups:
+          getattr(user, relationship).remove(group)
+
+        tainted = True
       else:
-        groups = Group.query.where(None).all()
-      # extend() == multiple; append() == single
-      getattr(user, relationship).extend(groups)
-      tainted = True
+        # groups = Group.query.where(None).all()
+        setattr(user, relationship, [])
+        tainted = True
     else:
       setattr(user, relationship, value)
       tainted  = True

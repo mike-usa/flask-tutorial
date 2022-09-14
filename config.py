@@ -36,7 +36,6 @@ class Config:
     if not db_uri:
       db_uri = f'{self.db_dialect}+{self.db_driver}://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}'
 
-    print(db_uri)
     return db_uri
 
 

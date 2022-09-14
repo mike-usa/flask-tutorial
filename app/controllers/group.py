@@ -6,6 +6,7 @@ import re
 
 # Third party imports
 from flask import redirect, render_template, g, request, session, url_for
+from sqlalchemy import or_
 
 # Local application imports
 from app.models.group import Group, db
@@ -22,7 +23,7 @@ def index():
     if group:
       return redirect(url_for('group_blueprint.update',group=group.group))
     else:
-      return create(group=groupname)
+      return create(groupname=groupname)
 
   return render_template(
     "groups.jinja2",
@@ -39,7 +40,7 @@ def show(groupname=None,group=None):
   # print(f'group {group.group}: [owner]={group.owner.username}')
   if request.args:
     if 'response' in request.args and request.args['response'] == 'json':
-      return group.serializer()
+      return group.serialize()
     else:
       return update(groupname=groupname, group=group)
 
@@ -67,7 +68,7 @@ def create(groupname=None):
 
   # ensure no group exists
   existing_group = Group.query.filter(
-      Group.groupname == groupname
+      Group.group == groupname
   ).first()
 
   if existing_group:
@@ -76,7 +77,6 @@ def create(groupname=None):
   # Create an instance of the Group class of required fields
   new_group = Group(
     group=groupname,
-    owner=request.args.get('owner'),
     created_at=dt.now(),
     is_security=bool(
       request.args.get('is_security')
@@ -148,7 +148,8 @@ def update(groupname=None, group=None):
 
     if column.lower() in exclude_fields and group.__dict__[column] != value:
       session['messages'].append(
-          {'error': f'Cannot update protected table field ({arg}).'})
+        {'error': f'Cannot update protected table field ({arg}).'}
+      )
       return redirect_home()
 
     type = group.__table__.columns[column].type.__class__.__name__
@@ -166,13 +167,55 @@ def update(groupname=None, group=None):
     if relationship in ['members', 'owners', 'maintainers']:
       from app.models.user import User
       # must pass object (can't pass id's)
-      if values:
-        members = User.query.filter(User.id.in_(values)).all()
+      if values and value not in ['[]','None']:
+        vals = {
+          'add': {
+            'strings': [],
+            'integers': []
+          },
+          'remove': {
+            'strings': [],
+            'integers': []
+          }
+        }
+        for v in values:
+          if v.lstrip('-').isdigit():
+            v = int(v)
+            if v >= 0:
+              vals['add']['integers'].append(v)
+            else:
+              vals['remove']['integers'].append(abs(v))
+          elif isinstance(v, str):
+            if v[0] != '-':
+              vals['add']['strings'].append(v)
+            else:
+              vals['remove']['strings'].append(v.lstrip('-'))
+
+        # Adds
+        add_members = User.query.filter(
+          or_(
+            User.id.in_(vals['add']['integers']),
+            User.username.in_(vals['add']['strings'])
+          )
+        ).all()
+        # NOTE: extend() == multiple; append() == single
+        getattr(group, relationship).extend(add_members)
+
+        # Removes
+        rem_members = User.query.filter(
+          or_(
+            User.id.in_(vals['remove']['integers']),
+            User.username.in_(vals['remove']['strings'])
+          )
+        ).all()
+        for member in rem_members:
+          getattr(group, relationship).remove(member)
+
+        tainted = True
       else:
-        members = User.query.where(None).all()
-      # extend() == multiple; append() == single
-      group.members.extend(members)  
-      tainted = True
+        # members = User.query.where(None).all()
+        setattr(group, relationship, [])
+        tainted = True
     else:
       setattr(group, relationship, value)
       tainted = True

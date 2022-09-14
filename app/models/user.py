@@ -21,7 +21,7 @@ def json_format(object):
 
   # Call 'Group' to serialize itself
   if object.__class__.__name__ == 'Group':
-    return object.serializer()
+    return object.serialize()
 
   # instance display
   return f'<{object.__class__.__name__} id={object.id}>'

@@ -16,6 +16,7 @@ def create_app():
   """Construct the core application."""
 
   app = Flask(__name__, instance_relative_config=False, static_folder='./assets', template_folder='./views')
+  # create object in order to use `@property` and load into app
   cfg = import_string(f'config.{env.title()}Config')()
   app.config.from_object(cfg)
   app.jinja_env.add_extension('jinja2.ext.loopcontrols')

@@ -56,7 +56,7 @@ class Group(TimestampMixin, db.Model, InspectorMixin):
   )
 
   # Displays
-  def serializer(self):
+  def serialize(self):
     columns = self.keys()
 
     excludes = []
